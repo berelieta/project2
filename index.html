@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Project 2</title>
+		
+		  <!-- Leaflet CSS -->
+		  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css"
+		  integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+		  crossorigin=""/>
+
+	  	<!-- Chart Tadeo -->
+	  	<svg class="chart"></svg>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+        <!-- WordCloud -->
+        <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+        <script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
+	</head>
+	<body>
+        <h1>Graphs for Project 2</h1>
+        <!-- WordCloud -->
+        <div id="container"></div>
+        <style>
+            html, body, #container {
+            width: 100%;
+            height: 90%;
+            margin: 0;
+            padding: 0;
+            }
+          </style> 
+        <script>
+            anychart.onDocumentReady(function() {
+            let data = [{"Origin":"INL","STATE":"MN","x":"Falls International","value":15.0},{"Origin":"WYS","STATE":"MT","x":"Westerly State","value":18.3},{"Origin":"ADK","STATE":"AK","x":"Adak","value":20.358490566},{"Origin":"GST","STATE":"AK","x":"Gustavus","value":23.725},{"Origin":"OAK","STATE":"CA","x":"Oakland International","value":26.358144743},{"Origin":"ANC","STATE":"AK","x":"Ted Stevens Anchorage","value":30.5281274587},{"Origin":"PHX","STATE":"AZ","x":"Phoenix Sky Harbor","value":30.5966742334},{"Origin":"CLD","STATE":"CA","x":"McClellan-Palomar","value":30.6797066015},{"Origin":"DAL","STATE":"TX","x":"Dallas Love Field","value":30.9258782515},{"Origin":"SMF","STATE":"CA","x":"Sacramento","value":31.46608299},{"Origin":"MBS","STATE":"MI","x":"MBS","value":73.1282527881},{"Origin":"BGM","STATE":"NY","x":"Greater Binghamton","value":73.8039215686},{"Origin":"PUB","STATE":"CO","x":"Pueblo Memorial","value":74.0},{"Origin":"EGE","STATE":"CO","x":"Eagle County","value":77.1733966746},{"Origin":"MOT","STATE":"ND","x":"Minot","value":79.1755725191},{"Origin":"ALO","STATE":"IA","x":"Waterloo","value":79.9032258065},{"Origin":"MQT","STATE":"MI","x":"Sawyer","value":80.2736842105},{"Origin":"SPI","STATE":"IL","x":"Abraham Lincoln","value":87.4213483146},{"Origin":"PLN","STATE":"MI","x":"Pellston","value":94.6666666667},{"Origin":"CMX","STATE":"MI","x":"Houghton County","value":122.5588235294}];
+            // create a tag (word) cloud chart
+            var chart = anychart.tagCloud(data);
+            // set a chart title
+            chart.title('20 Best and Worst Airports in the US (according to average delay times)')
+            // set an array of angles at which the words will be laid out
+            chart.angles([-30, 15, 30])
+            // enable a color range
+            var customColorScale = anychart.scales.linearColor();
+			customColorScale.colors(["#ffcc00", "#00ccff"]);
+			chart.background({fill: "#2a3f4e 0.2"});
+            // set the color scale as the color scale of the chart
+            chart.colorScale(customColorScale);
+            // add a color range
+            chart.colorRange().enabled(true);
+            // change spacing: 
+            chart.textSpacing(11);
+            chart.fontFamily('Helvetica');
+            chart.fontWeight(400);
+            // set the color range length
+            chart.colorRange().length('90%');
+            // configure the tooltips: 
+            chart.tooltip().format("{%value} minutes\n\nAbbreviation: {%Origin}\n\n State: {%STATE}");
+            // display the word cloud chart
+            chart.container("container");
+            chart.draw();
+            });
+        </script>
+
+        <div class="arc-diagram"></div>
+
+		<!-- Map Bere -->
+		<div id="map-id"></div>
+		<style>
+		#map-id { 
+		  height: 500px;
+		  padding: 80px;
+		  margin: 80px; 
+		}
+		#chartContainer { 
+		  display: flex;
+		  align-items: center;
+		  justify-content: center; 
+			}
+		</style>
+
+
+
+		<!-- Waterfall Tadeo -->
+		<div id="chartContainer">
+		  <script type="text/javascript">
+		    datas =[]
+		    d3.json("http://40.125.68.71:5000/waterfall",d=>{
+		    var yMin = 0,
+		        yMax = 150,
+		        xLabel = "Bar",
+		        yLabel = "Value";
+
+		    data =d
+		    
+		    //{"label":"M1","value":117.727,"type":"bar"}
+		    console.log( data)
+		    // Create the svg 
+		    var svg = dimple.newSvg("#chartContainer", 590, 400);
+		  
+		    var waterfallData = [];
+		    
+		    var runningTotal = 0;
+		    
+		    var padBase = Math.abs(yMin);
+		    // Rearrange the data
+		    data.forEach(function (d, i) {
+		      // Add the padding bar, this will be removed later but is used
+		      // for positioning
+		      
+		      //Difference between bar and variance
+		      waterfallData.push({
+		        x: i,
+		        y: padBase
+		          + (d.type === "var" ? runningTotal : 0)
+		          + (d.value < 0 ? d.value : 0),
+		        series: "pad" });
+		      
+		      waterfallData.push({
+		        x: i,
+		        y: Math.abs(d.value),
+		        series: (d.type === "bar" ?
+		          "bar" : (d.value < 0 ?
+		          "negative" : "positive")) });
+		        // Move the running total for managing the flow
+		        runningTotal = (d.type === "var" ? runningTotal : 0) + d.value;
+		    });
+
+		    // Create the chart from the updated data
+		    var myChart = new dimple.chart(svg, waterfallData);
+		    myChart.setBounds(60, 30, 510, 335)
+		    var x = myChart.addCategoryAxis("x", "x");
+
+		    
+		    x.addOrderRule("x");
+
+		    // We need 2 y axes.  The bars will be positioned using
+		    // the second axis (all positive) 
+		    
+		    var y1 = myChart.addMeasureAxis("y", yLabel);
+		    y1.overrideMin = padBase * -1;
+		    y1.overrideMax = yMax;
+		    var y2 = myChart.addMeasureAxis("y", "y");
+		    y2.overrideMin = 0;    
+		    y2.overrideMax = padBase + yMax;
+		    y2.hidden = false;
+
+		    // Add the series    
+		    var s = myChart.addSeries(["series"], dimple.plot.bar, [x, y2]);
+
+		    // Assign blue, red and green using the default colors, these can
+		    // be any colors. 
+		    myChart.assignColor("bar", myChart.defaultColors[0].fill);
+		    myChart.assignColor("negative", myChart.defaultColors[1].fill);
+		    myChart.assignColor("positive", myChart.defaultColors[3].fill);
+		    myChart.draw();
+
+		    // Remove the leading numbers from the x axis text
+		    x.shapes.selectAll("text").text(function (d) {
+		      return (d === "" ? "" : data[parseInt(d)].label);
+		    });
+
+		    // Remove the padding elements entirely
+		    svg.selectAll(".dimple-pad").remove();
+
+		    // Change the measure name and the category names for the tooltips
+		    s.y.measure = yLabel;
+		    s.x.categoryFields = [xLabel];
+
+		    // Remove the category fields from the series, to remove from  the tooltips
+		    s.categoryFields = [];
+
+		    s.shapes.each(function (d) {
+		      // Get the index from the original data
+		      var j = parseInt(d.xField[0]);
+		      // Remove the unwanted x label prefixes from the shapes for the tooltips
+		      d.xField[0] = data[j].label;
+		      // Change the values back to negatives where necessary for tooltips
+		      d.height = data[j].value;
+		    });
+		    });
+		  </script>
+		</div>
+
+
+
+        
+
+		<!-- D3 -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.5.0/d3.min.js"></script>
+		<!-- Leaflet JavaScript -->
+		<script src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js"
+		integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q=="
+		crossorigin=""></script>
+		<!-- API Key -->
+		<script type="text/javascript" src="static/js/config.js"></script>
+		<!-- Our JavaScript -->
+		<script type="text/javascript" src="static/js/logic.js"></script> 
+        <link rel="stylesheet" href="bootstrap.min.css"></link>
+		<script src="https://d3js.org/d3.v5.min.js"></script>
+		<script type="text/javascript" src="app.js"></script>
+  </body>
+</html>
