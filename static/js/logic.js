@@ -14,7 +14,7 @@ function createMap(airportStations){
   var baseMaps = { "Light Map" : lightmap};
 
   // Create an overlayMaps object to hold the airportStations layer
-  var overlayMaps =  { "Bike Stations": airportStations};
+  var overlayMaps =  { "Airports": airportStations};
 
   // Create the map object with options
   var map = L.map("map-id", 

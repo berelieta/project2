@@ -12,13 +12,54 @@
 	  	<!-- Chart Tadeo -->
 	  	<svg class="chart"></svg>
 		<script src="https://d3js.org/d3.v4.min.js"></script>
-		<script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
-
-
+        <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+        <!-- WordCloud -->
+        <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+        <script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
 	</head>
 	<body>
         <h1>Graphs for Project 2</h1>
-        <div class="wordmap"></div>
+        <!-- WordCloud -->
+        <div id="container"></div>
+        <style>
+            html, body, #container {
+            width: 100%;
+            height: 90%;
+            margin: 0;
+            padding: 0;
+            }
+          </style> 
+        <script>
+            anychart.onDocumentReady(function() {
+            let data = [{"Origin":"INL","STATE":"MN","x":"Falls International","value":15.0},{"Origin":"WYS","STATE":"MT","x":"Westerly State","value":18.3},{"Origin":"ADK","STATE":"AK","x":"Adak","value":20.358490566},{"Origin":"GST","STATE":"AK","x":"Gustavus","value":23.725},{"Origin":"OAK","STATE":"CA","x":"Oakland International","value":26.358144743},{"Origin":"ANC","STATE":"AK","x":"Ted Stevens Anchorage","value":30.5281274587},{"Origin":"PHX","STATE":"AZ","x":"Phoenix Sky Harbor","value":30.5966742334},{"Origin":"CLD","STATE":"CA","x":"McClellan-Palomar","value":30.6797066015},{"Origin":"DAL","STATE":"TX","x":"Dallas Love Field","value":30.9258782515},{"Origin":"SMF","STATE":"CA","x":"Sacramento","value":31.46608299},{"Origin":"MBS","STATE":"MI","x":"MBS","value":73.1282527881},{"Origin":"BGM","STATE":"NY","x":"Greater Binghamton","value":73.8039215686},{"Origin":"PUB","STATE":"CO","x":"Pueblo Memorial","value":74.0},{"Origin":"EGE","STATE":"CO","x":"Eagle County","value":77.1733966746},{"Origin":"MOT","STATE":"ND","x":"Minot","value":79.1755725191},{"Origin":"ALO","STATE":"IA","x":"Waterloo","value":79.9032258065},{"Origin":"MQT","STATE":"MI","x":"Sawyer","value":80.2736842105},{"Origin":"SPI","STATE":"IL","x":"Abraham Lincoln","value":87.4213483146},{"Origin":"PLN","STATE":"MI","x":"Pellston","value":94.6666666667},{"Origin":"CMX","STATE":"MI","x":"Houghton County","value":122.5588235294}];
+            // create a tag (word) cloud chart
+            var chart = anychart.tagCloud(data);
+            // set a chart title
+            chart.title('20 Best and Worst Airports in the US (according to average delay times)')
+            // set an array of angles at which the words will be laid out
+            chart.angles([-30, 15, 30])
+            // enable a color range
+            var customColorScale = anychart.scales.linearColor();
+			customColorScale.colors(["#ffcc00", "#00ccff"]);
+			chart.background({fill: "#2a3f4e 0.2"});
+            // set the color scale as the color scale of the chart
+            chart.colorScale(customColorScale);
+            // add a color range
+            chart.colorRange().enabled(true);
+            // change spacing: 
+            chart.textSpacing(11);
+            chart.fontFamily('Helvetica');
+            chart.fontWeight(400);
+            // set the color range length
+            chart.colorRange().length('90%');
+            // configure the tooltips: 
+            chart.tooltip().format("{%value} minutes\n\nAbbreviation: {%Origin}\n\n State: {%STATE}");
+            // display the word cloud chart
+            chart.container("container");
+            chart.draw();
+            });
+        </script>
+
         <div class="arc-diagram"></div>
 
 		<!-- Map Bere -->
